@@ -480,10 +480,10 @@ impl nicks::Trait for Runtime {
 // 	type Currency = Balances;
 // }
 
-impl edge_treasury_reward::Trait for Runtime {
-	type Event = Event;
-	type Currency = Balances;
-}
+// impl edge_treasury_reward::Trait for Runtime {
+// 	type Event = Event;
+// 	type Currency = Balances;
+// }
 
 // impl edge_voting::Trait for Runtime {
 // 	type Event = Event;
@@ -553,7 +553,7 @@ construct_runtime!(
 		// Identity: edge_identity::{Module, Call, Storage, Config<T>, Event<T>},
 		// Signaling: edge_signaling::{Module, Call, Storage, Config<T>, Event<T>},
 		// Voting: edge_voting::{Module, Call, Storage, Event<T>},
-		TreasuryReward: edge_treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
+		// TreasuryReward: edge_treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
 
