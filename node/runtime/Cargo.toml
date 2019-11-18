@@ -62,7 +62,7 @@ utility = { package = "paint-utility", git = "https://github.com/paritytech/subs
 transaction-payment = { package = "paint-transaction-payment", git = "https://github.com/paritytech/substrate.git", default-features = false }
 transaction-payment-rpc-runtime-api = { package = "paint-transaction-payment-rpc-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
 
-edge-identity = { path = "../../modules/edge-identity" }
+edge-treasury-reward = { path = "../../modules/edge-treasury-reward" }
 
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/paritytech/substrate.git", version = "1.0.4" }
@@ -120,7 +120,7 @@ std = [
 	"tx-pool-api/std",
 	"utility/std",
 	"version/std",
-	"edge-identity/std",
+	"edge-treasury-reward/std",
 
 	"edgeware-primitives/std",
 ]
