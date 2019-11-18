@@ -6,7 +6,6 @@ edition = "2018"
 
 [dependencies]
 serde = { version = "1.0", default-features = false, optional = true }
-serde_derive = { version = "1.0", optional = true }
 safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
 substrate-keyring = { git = "https://github.com/paritytech/substrate.git", optional = true }
@@ -22,10 +21,8 @@ paint-balances = { git = "https://github.com/paritytech/substrate.git", default-
 default = ["std"]
 std = [
     "serde/std",
-    "serde_derive",
     "safe-mix/std",
     "codec/std",
-    "substrate-primitives/std",
     "rstd/std",
     "paint-support/std",
     "sr-primitives/std",

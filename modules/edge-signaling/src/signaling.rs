@@ -27,8 +27,7 @@ use codec::{Encode, Decode};
 
 pub use edge_voting::voting::{VoteType, VoteOutcome, VoteStage, TallyType};
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, PartialEq)]
+#[derive(Encode, Decode, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub struct ProposalRecord<AccountId, Moment> {
 	pub index: u32,
 	pub author: AccountId,

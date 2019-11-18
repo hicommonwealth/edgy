@@ -18,12 +18,6 @@
 
 #[cfg(feature = "std")]
 extern crate serde;
-
-// Needed for deriving `Serialize` and `Deserialize` for various types.
-// We only implement the serde traits for std builds - they're unneeded
-// in the wasm runtime.
-#[cfg(feature = "std")]
-extern crate serde_derive;
 #[macro_use]
 extern crate paint_support;
 

@@ -39,8 +39,7 @@ use paint_support::codec::{Encode, Decode};
 /// A potential outcome of a vote, with 2^32 possible options
 pub type VoteOutcome = [u8; 32];
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub enum VoteStage {
 	// Before voting stage, no votes accepted
 	PreVoting,
@@ -52,8 +51,7 @@ pub enum VoteStage {
 	Completed,
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub enum VoteType {
 	// Binary decision vote, i.e. 2 outcomes
 	Binary,
@@ -63,8 +61,7 @@ pub enum VoteType {
 	RankedChoice,
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub enum TallyType {
 	// 1 person 1 vote, i.e. 1 account 1 vote
 	OnePerson,
@@ -72,8 +69,7 @@ pub enum TallyType {
 	OneCoin,
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, PartialEq)]
+#[derive(Encode, Decode, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub struct VoteData<AccountId> {
 	// creator of vote
 	pub initiator: AccountId,
@@ -87,8 +83,7 @@ pub struct VoteData<AccountId> {
 	pub is_commit_reveal: bool,
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Encode, Decode, PartialEq)]
+#[derive(Encode, Decode, Clone, Eq, PartialEq, Ord, PartialOrd, RuntimeDebug)]
 pub struct VoteRecord<AccountId> {
 	// Identifier of the vote
 	pub id: u64,
