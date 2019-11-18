@@ -1,0 +1,16 @@
+[package]
+name = "edgeware-rpc"
+version = "2.0.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2018"
+
+[dependencies]
+client = { package = "substrate-client", git = "https://github.com/paritytech/substrate.git" }
+jsonrpc-core = "14.0.3"
+edgeware-primitives = { path = "../primitives" }
+edgeware-runtime = { path = "../runtime" }
+sr-primitives = { git = "https://github.com/paritytech/substrate.git" }
+paint-contracts-rpc = { git = "https://github.com/paritytech/substrate.git" }
+paint-transaction-payment-rpc = { git = "https://github.com/paritytech/substrate.git" }
+paint-system-rpc = { git = "https://github.com/paritytech/substrate.git" }
+transaction_pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate.git" }

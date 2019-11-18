@@ -1,0 +1,122 @@
+[package]
+name = "edgeware-runtime"
+version = "2.0.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+# third-party dependencies
+codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
+integer-sqrt = { version = "0.1.2" }
+safe-mix = { version = "1.0", default-features = false }
+rustc-hex = { version = "2.0", optional = true }
+serde = { version = "1.0.102", optional = true }
+
+# primitives
+authority-discovery-primitives = { package = "substrate-authority-discovery-primitives", git = "https://github.com/paritytech/substrate.git", default-features = false }
+babe-primitives = { package = "substrate-consensus-babe-primitives", git = "https://github.com/paritytech/substrate.git", default-features = false }
+block-builder-api = { package = "substrate-block-builder-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false}
+inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate.git", default-features = false }
+edgeware-primitives = { path = "../primitives", default-features = false }
+offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate.git", default-features = false }
+primitives = { package = "substrate-primitives",  git = "https://github.com/paritytech/substrate.git", default-features = false }
+rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", default-features = false }
+sr-api = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+sr-staking-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+substrate-keyring = { git = "https://github.com/paritytech/substrate.git", optional = true }
+substrate-session = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+tx-pool-api = { package = "substrate-transaction-pool-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
+version = { package = "sr-version", git = "https://github.com/paritytech/substrate.git", default-features = false }
+
+# paint dependencies
+authority-discovery = { package = "paint-authority-discovery", git = "https://github.com/paritytech/substrate.git", default-features = false }
+authorship = { package = "paint-authorship", git = "https://github.com/paritytech/substrate.git", default-features = false }
+babe = { package = "paint-babe", git = "https://github.com/paritytech/substrate.git", default-features = false }
+balances = { package = "paint-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
+collective = { package = "paint-collective", git = "https://github.com/paritytech/substrate.git", default-features = false }
+contracts = { package = "paint-contracts", git = "https://github.com/paritytech/substrate.git", default-features = false }
+contracts-rpc-runtime-api = { package = "paint-contracts-rpc-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
+democracy = { package = "paint-democracy", git = "https://github.com/paritytech/substrate.git", default-features = false }
+elections-phragmen = { package = "paint-elections-phragmen", git = "https://github.com/paritytech/substrate.git", default-features = false }
+executive = { package = "paint-executive", git = "https://github.com/paritytech/substrate.git", default-features = false }
+finality-tracker = { package = "paint-finality-tracker", git = "https://github.com/paritytech/substrate.git", default-features = false }
+grandpa = { package = "paint-grandpa", git = "https://github.com/paritytech/substrate.git", default-features = false }
+im-online = { package = "paint-im-online", git = "https://github.com/paritytech/substrate.git", default-features = false }
+indices = { package = "paint-indices", git = "https://github.com/paritytech/substrate.git", default-features = false }
+membership = { package = "paint-membership", git = "https://github.com/paritytech/substrate.git", default-features = false }
+nicks = { package = "paint-nicks", git = "https://github.com/paritytech/substrate.git", default-features = false }
+offences = { package = "paint-offences", git = "https://github.com/paritytech/substrate.git", default-features = false }
+randomness-collective-flip = { package = "paint-randomness-collective-flip", git = "https://github.com/paritytech/substrate.git", default-features = false }
+session = { package = "paint-session", git = "https://github.com/paritytech/substrate.git", default-features = false, features = ["historical"] }
+staking = { package = "paint-staking", git = "https://github.com/paritytech/substrate.git", default-features = false }
+paint-staking-reward-curve = { git = "https://github.com/paritytech/substrate.git" }
+sudo = { package = "paint-sudo", git = "https://github.com/paritytech/substrate.git", default-features = false }
+support = { package = "paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+system = { package = "paint-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
+system-rpc-runtime-api = { package = "paint-system-rpc-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
+timestamp = { package = "paint-timestamp", git = "https://github.com/paritytech/substrate.git", default-features = false }
+treasury = { package = "paint-treasury", git = "https://github.com/paritytech/substrate.git", default-features = false }
+utility = { package = "paint-utility", git = "https://github.com/paritytech/substrate.git", default-features = false }
+transaction-payment = { package = "paint-transaction-payment", git = "https://github.com/paritytech/substrate.git", default-features = false }
+transaction-payment-rpc-runtime-api = { package = "paint-transaction-payment-rpc-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
+
+[build-dependencies]
+wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/paritytech/substrate.git", version = "1.0.4" }
+
+[dev-dependencies]
+runtime_io = { package = "sr-io", git = "https://github.com/paritytech/substrate.git" }
+
+[features]
+default = ["std"]
+std = [
+	"authority-discovery-primitives/std",
+	"authority-discovery/std",
+	"authorship/std",
+	"babe-primitives/std",
+	"babe/std",
+	"balances/std",
+	"block-builder-api/std",
+	"codec/std",
+	"collective/std",
+	"contracts-rpc-runtime-api/std",
+	"contracts/std",
+	"democracy/std",
+	"elections-phragmen/std",
+	"executive/std",
+	"finality-tracker/std",
+	"grandpa/std",
+	"im-online/std",
+	"indices/std",
+	"inherents/std",
+	"membership/std",
+	"nicks/std",
+	"edgeware-primitives/std",
+	"offchain-primitives/std",
+	"offences/std",
+	"primitives/std",
+	"randomness-collective-flip/std",
+	"rstd/std",
+	"rustc-hex",
+	"safe-mix/std",
+	"serde",
+	"session/std",
+	"sr-api/std",
+	"sr-primitives/std",
+	"sr-staking-primitives/std",
+	"staking/std",
+	"substrate-keyring",
+	"substrate-session/std",
+	"sudo/std",
+	"support/std",
+	"system-rpc-runtime-api/std",
+	"system/std",
+	"timestamp/std",
+	"transaction-payment-rpc-runtime-api/std",
+	"transaction-payment/std",
+	"treasury/std",
+	"tx-pool-api/std",
+	"utility/std",
+	"version/std",
+]

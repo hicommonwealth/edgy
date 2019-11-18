@@ -1,0 +1,16 @@
+[workspace]
+members = [
+	"modules/edge-signaling",
+	"modules/edge-identity",
+	"modules/edge-voting",
+	"modules/edge-treasury-reward",
+	"node/cli",
+	"node/executor",
+	"node/primitives",
+	"node/rpc",
+	"node/runtime",
+]
+
+[profile.release]
+# Edgeware runtime requires unwinding.
+panic = "unwind"
