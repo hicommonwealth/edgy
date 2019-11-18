@@ -21,7 +21,7 @@ substrate-primitives = { git = "https://github.com/paritytech/substrate.git", de
 [features]
 default = ["std"]
 std = [
-	"serde/std",
+	"serde",
 	"safe-mix/std",
 	"codec/std",
 	"rstd/std",
