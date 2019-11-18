@@ -66,10 +66,10 @@ decl_event!(
 decl_storage! {
 	trait Store for Module<T: Trait> as TreasuryReward {
 		/// Interval in number of blocks to reward treasury
-		pub MintingInterval get(minting_interval) config(): T::BlockNumber;
+		pub MintingInterval get(fn minting_interval) config(): T::BlockNumber;
 		/// Current payout of module
-		pub CurrentPayout get(current_payout) config(): BalanceOf<T>;
+		pub CurrentPayout get(fn current_payout) config(): BalanceOf<T>;
 		/// Current pot
-		pub Pot get(pot): T::Balance;
+		pub Pot get(fn pot): T::Balance;
 	}
 }

@@ -20,9 +20,9 @@
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
 #![recursion_limit="256"]
 
-use edge_identity::identity;
+// use edge_identity::identity;
 // use edge_signaling::signaling;
-// use edge_treasury_reward::treasury_reward;
+use edge_treasury_reward::treasury_reward;
 // use edge_voting::voting;
 
 
@@ -476,20 +476,20 @@ impl nicks::Trait for Runtime {
 }
 
 
-impl identity::Trait for Runtime {
-	type Event = Event;
-	type Currency = Balances;
-}
+// impl identity::Trait for Runtime {
+// 	type Event = Event;
+// 	type Currency = Balances;
+// }
 
 // impl signaling::Trait for Runtime {
 // 	type Event = Event;
 // 	type Currency = Balances;
 // }
 
-// impl treasury_reward::Trait for Runtime {
-// 	type Event = Event;
-// 	type Currency = Balances;
-// }
+impl treasury_reward::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
 
 // impl voting::Trait for Runtime {
 // 	type Event = Event;
@@ -556,10 +556,10 @@ construct_runtime!(
 		Offences: offences::{Module, Call, Storage, Event},
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
 		Nicks: nicks::{Module, Call, Storage, Event<T>},
-		Identity: identity::{Module, Call, Storage, Config<T>, Event<T>},
+		// Identity: identity::{Module, Call, Storage, Config<T>, Event<T>},
 		// Signaling: signaling::{Module, Call, Storage, Config<T>, Event<T>},
 		// Voting: voting::{Module, Call, Storage, Event<T>},
-		// TreasuryReward: treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
+		TreasuryReward: treasury_reward,
 	}
 );
 

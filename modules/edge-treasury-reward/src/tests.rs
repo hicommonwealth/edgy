@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Edgeware.  If not, see <http://www.gnu.org/licenses/>
 
-#![cfg(test)]
-
-use sr_staking_primitives::SessionIndex;
 use super::*;
+use sr_staking_primitives::SessionIndex;
 use sr_primitives::traits::OpaqueKeys;
 use sr_primitives::curve::PiecewiseLinear;
 use sr_primitives::testing::UintAuthorityId;

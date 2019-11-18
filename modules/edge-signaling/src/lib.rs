@@ -236,18 +236,18 @@ decl_event!(
 decl_storage! {
 	trait Store for Module<T: Trait> as Signaling {
 		/// The total number of proposals created thus far.
-		pub ProposalCount get(proposal_count) : u32;
+		pub ProposalCount get(fn proposal_count) : u32;
 		/// A list of all extant proposals.
-		pub InactiveProposals get(inactive_proposals): Vec<(T::Hash, T::BlockNumber)>;
+		pub InactiveProposals get(fn inactive_proposals): Vec<(T::Hash, T::BlockNumber)>;
 		/// A list of active proposals along with the time at which they complete.
-		pub ActiveProposals get(active_proposals): Vec<(T::Hash, T::BlockNumber)>;
+		pub ActiveProposals get(fn active_proposals): Vec<(T::Hash, T::BlockNumber)>;
 		/// A list of completed proposals, pending deletion
-		pub CompletedProposals get(completed_proposals): Vec<(T::Hash, T::BlockNumber)>;
+		pub CompletedProposals get(fn completed_proposals): Vec<(T::Hash, T::BlockNumber)>;
 		/// Amount of time a proposal remains in "Voting" stage.
-		pub VotingLength get(voting_length) config(): T::BlockNumber;
+		pub VotingLength get(fn voting_length) config(): T::BlockNumber;
 		/// Map for retrieving the information about any proposal from its hash.
-		pub ProposalOf get(proposal_of): map T::Hash => Option<ProposalRecord<T::AccountId, T::BlockNumber>>;
+		pub ProposalOf get(fn proposal_of): map T::Hash => Option<ProposalRecord<T::AccountId, T::BlockNumber>>;
 		/// Registration bond
-		pub ProposalCreationBond get(proposal_creation_bond) config(): BalanceOf<T>;
+		pub ProposalCreationBond get(fn proposal_creation_bond) config(): BalanceOf<T>;
 	}
 }

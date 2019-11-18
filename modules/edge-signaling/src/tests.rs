@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Edgeware.  If not, see <http://www.gnu.org/licenses/>
 
-
 use super::*;
 
 use support::{parameter_types, impl_outer_origin, assert_err, assert_ok};
