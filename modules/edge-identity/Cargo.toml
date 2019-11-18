@@ -9,13 +9,15 @@ serde = { version = "1.0", default-features = false, optional = true }
 safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
 substrate-keyring = { git = "https://github.com/paritytech/substrate.git", optional = true }
-substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", default-features = false }
-sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-support = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-system = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-balances = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+support = { package ="paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+system = { package ="paint-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
+balances = { package ="paint-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
+
+[dev-dependencies]
+sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 
 [features]
 default = ["std"]
@@ -24,8 +26,8 @@ std = [
     "safe-mix/std",
     "codec/std",
     "rstd/std",
-    "paint-support/std",
     "sr-primitives/std",
-    "paint-system/std",
-    "paint-balances/std",
+    "support/std",
+    "system/std",
+    "balances/std",
 ]

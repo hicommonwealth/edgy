@@ -10,19 +10,21 @@ serde_derive = { version = "1.0", optional = true }
 safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
 substrate-keyring = { git = "https://github.com/paritytech/substrate.git", optional = true }
-substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 sr-staking-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-staking-reward-curve = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+staking-reward-curve = { package = "paint-staking-reward-curve", git = "https://github.com/paritytech/substrate.git", default-features = false }
 rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", default-features = false }
-sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-support = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-system = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-staking = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-session = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-balances = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-treasury = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-paint-timestamp = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+support = { package = "paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+system = { package = "paint-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
+staking = { package = "paint-staking", git = "https://github.com/paritytech/substrate.git", default-features = false }
+session = { package = "paint-session", git = "https://github.com/paritytech/substrate.git", default-features = false }
+balances = { package = "paint-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
+treasury = { package = "paint-treasury", git = "https://github.com/paritytech/substrate.git", default-features = false }
+timestamp = { package = "paint-timestamp", git = "https://github.com/paritytech/substrate.git", default-features = false }
+
+[dev-dependencies]
+sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 
 [features]
 default = ["std"]
@@ -31,15 +33,14 @@ std = [
 	"serde_derive",
 	"safe-mix/std",
 	"codec/std",
-	"substrate-primitives/std",
 	"rstd/std",
 	"sr-primitives/std",
-	"paint-balances/std",
-	"paint-support/std",
-	"paint-system/std",
-	"paint-staking/std",
-	"paint-session/std",
-	"paint-treasury/std",
-	"paint-timestamp/std",
+	"balances/std",
+	"support/std",
+	"system/std",
+	"staking/std",
+	"session/std",
+	"treasury/std",
+	"timestamp/std",
 	"sr-staking-primitives/std"
 ]

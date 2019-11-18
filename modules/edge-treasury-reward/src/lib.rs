@@ -12,335 +12,64 @@
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Edgeware.  If not, see <http://www.gnu.org/licenses/>
+// along with Edgeware.  If not, see <http://www.gnu.org/licenses/>.
 
+#![recursion_limit="128"]
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(feature = "std")]
-extern crate serde;
-
-// Needed for deriving `Serialize` and `Deserialize` for various types.
-// We only implement the serde traits for std builds - they're unneeded
-// in the wasm runtime.
-#[cfg(feature = "std")]
-extern crate serde_derive;
-#[macro_use]
-extern crate paint_support;
-
-extern crate sr_io as runtime_io;
-extern crate sr_primitives as runtime_primitives;
-extern crate paint_support as runtime_support;
-extern crate substrate_primitives as primitives;
-
-extern crate paint_system as system;
-extern crate paint_balances as balances;
-
-use sr_primitives::curve::PiecewiseLinear;
-
-pub mod treasury_reward;
-pub use treasury_reward::{Module, Trait, RawEvent, Event};
-
 #[cfg(test)]
-mod tests {
-use super::*;
-	use sr_primitives::traits::OpaqueKeys;
-	use sr_primitives::testing::UintAuthorityId;
-	#[cfg(feature = "std")]
-	use std::{collections::HashSet, cell::RefCell};
-	use primitives::{H256, crypto::key_types};
-	use rstd::prelude::*;
-	use sr_staking_primitives::SessionIndex;
-	// The testing primitives are very useful for avoiding having to work with
-	// public keys. `u64` is used as the `AccountId` and no `Signature`s are requried.
-	use runtime_primitives::{
-		Perbill, Permill, KeyTypeId,
-		testing::{Header},
-		traits::{OnFinalize, IdentityLookup, One},
-	};
+mod tests;
 
-	/// The AccountId alias in this test module.
-	pub type AccountId = u64;
-	pub type Balance = u128;
+use support::traits::Currency;
+use rstd::prelude::*;
+use sr_primitives::traits::{Zero};
 
-	/// Simple structure that exposes how u64 currency can be represented as... u64.
-	pub struct CurrencyToVoteHandler;
-	impl sr_primitives::traits::Convert<u64, u64> for CurrencyToVoteHandler {
-		fn convert(x: u64) -> u64 { x }
-	}
-	impl sr_primitives::traits::Convert<u128, u64> for CurrencyToVoteHandler {
-		fn convert(x: u128) -> u64 { x as u64 }
-	}
-	impl sr_primitives::traits::Convert<u128, u128> for CurrencyToVoteHandler {
-		fn convert(x: u128) -> u128 { x }
-	}
-	impl sr_primitives::traits::Convert<u64, u128> for CurrencyToVoteHandler {
-		fn convert(x: u64) -> u128 { x as u128 }
-	}
+use support::{decl_event, decl_module, decl_storage};
 
-	thread_local! {
-		static SESSION: RefCell<(Vec<AccountId>, HashSet<AccountId>)> = RefCell::new(Default::default());
-		static EXISTENTIAL_DEPOSIT: RefCell<u64> = RefCell::new(0);
-	}
+pub type BalanceOf<T> = <<T as staking::Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance;
 
-	pub struct TestSessionHandler;
-	impl paint_session::SessionHandler<AccountId> for TestSessionHandler {
-		const KEY_TYPE_IDS: &'static [KeyTypeId] = &[key_types::DUMMY];
+pub trait Trait: staking::Trait + treasury::Trait + balances::Trait {
+	/// The overarching event type.
+	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+	/// The account balance
+	type Currency: Currency<Self::AccountId>;
+}
 
-		fn on_genesis_session<Ks: OpaqueKeys>(_validators: &[(AccountId, Ks)]) {}
-
-		fn on_new_session<Ks: OpaqueKeys>(
-			_changed: bool,
-			validators: &[(AccountId, Ks)],
-			_queued_validators: &[(AccountId, Ks)],
-		) {
-			SESSION.with(|x|
-				*x.borrow_mut() = (validators.iter().map(|x| x.0.clone()).collect(), HashSet::new())
-			);
-		}
-
-		fn on_disabled(validator_index: usize) {
-			SESSION.with(|d| {
-				let mut d = d.borrow_mut();
-				let value = d.0[validator_index];
-				d.1.insert(value);
-			})
-		}
-	}
-
-	paint_support::impl_outer_origin! {
-		pub enum Origin for Test {}
-	}
-
-	#[derive(Clone, PartialEq, Eq, Debug)]
-	pub struct Test;
-
-	parameter_types! {
-		pub const BlockHashCount: u64 = 250;
-		pub const MaximumBlockWeight: u32 = 1024;
-		pub const MaximumBlockLength: u32 = 2 * 1024;
-		pub const AvailableBlockRatio: Perbill = Perbill::one();
-	}
-
-	impl system::Trait for Test {
-		type Origin = Origin;
-		type Index = u64;
-		type BlockNumber = u64;
-		type Call = ();
-		type Hash = H256;
-		type Hashing = ::sr_primitives::traits::BlakeTwo256;
-		type AccountId = u64;
-		type Lookup = IdentityLookup<Self::AccountId>;
-		type Header = Header;
-		type Event = ();
-		type BlockHashCount = BlockHashCount;
-		type MaximumBlockWeight = MaximumBlockWeight;
-		type MaximumBlockLength = MaximumBlockLength;
-		type AvailableBlockRatio = AvailableBlockRatio;
-		type Version = ();
-	}
-
-	parameter_types! {
-		pub const ExistentialDeposit: u128 = 0;
-		pub const TransferFee: u128 = 0;
-		pub const CreationFee: u128 = 0;
-	}
-
-	impl balances::Trait for Test {
-		/// The type for recording an account's balance.
-		type Balance = u128;
-		/// What to do if an account's free balance gets zeroed.
-		type OnFreeBalanceZero = ();
-		/// What to do if a new account is created.
-		type OnNewAccount = ();
-		/// The ubiquitous event type.
-		type Event = ();
-		type DustRemoval = ();
-		type TransferPayment = ();
-		type ExistentialDeposit = ExistentialDeposit;
-		type TransferFee = TransferFee;
-		type CreationFee = CreationFee;
-	}
-
-	parameter_types! {
-		pub const Period: u64 = 1;
-		pub const Offset: u64 = 0;
-		pub const UncleGenerations: u64 = 0;
-		pub const DisabledValidatorsThreshold: Perbill = Perbill::from_percent(25);
-	}
-
-	impl paint_session::Trait for Test {
-		type OnSessionEnding = paint_session::historical::NoteHistoricalRoot<Test, Staking>;
-		type Keys = UintAuthorityId;
-		type ShouldEndSession = paint_session::PeriodicSessions<Period, Offset>;
-		type SessionHandler = TestSessionHandler;
-		type Event = ();
-		type ValidatorId = AccountId;
-		type ValidatorIdOf = paint_staking::StashOf<Test>;
-		type SelectInitialValidators = Staking;
-		type DisabledValidatorsThreshold = DisabledValidatorsThreshold;
-	}
-
-	impl paint_session::historical::Trait for Test {
-		type FullIdentification = paint_staking::Exposure<AccountId, Balance>;
-		type FullIdentificationOf = paint_staking::ExposureOf<Test>;
-	}
-
-	paint_support::parameter_types! {
-		pub const MinimumPeriod: u64 = 5;
-	}
-	impl paint_timestamp::Trait for Test {
-		type Moment = u64;
-		type OnTimestampSet = ();
-		type MinimumPeriod = MinimumPeriod;
-	}
-
-	paint_staking_reward_curve::build! {
-		const I_NPOS: PiecewiseLinear<'static> = curve!(
-			min_inflation: 0_025_000,
-			max_inflation: 0_100_000,
-			ideal_stake: 0_500_000,
-			falloff: 0_050_000,
-			max_piece_count: 40,
-			test_precision: 0_005_000,
-		);
-	}
-
-	parameter_types! {
-		pub const SessionsPerEra: SessionIndex = 3;
-		pub const BondingDuration: paint_staking::EraIndex = 3;
-		pub const RewardCurve: &'static PiecewiseLinear<'static> = &I_NPOS;
-	}
-
-	impl paint_staking::Trait for Test {
-		type Currency = Balances;
-		type Time = Timestamp;
-		type CurrencyToVote = CurrencyToVoteHandler;
-		type RewardRemainder = ();
-		type Event = ();
-		type Slash = ();
-		type Reward = ();
-		type SessionsPerEra = SessionsPerEra;
-		type BondingDuration = BondingDuration;
-		type SessionInterface = Self;
-		type RewardCurve = RewardCurve;
-	}
-
-	paint_support::parameter_types! {
-		pub const ProposalBond: Permill = Permill::from_percent(5);
-		pub const ProposalBondMinimum: u64 = 1;
-		pub const SpendPeriod: u64 = 2;
-		pub const Burn: Permill = Permill::from_percent(50);
-	}
-
-	impl paint_treasury::Trait for Test {
-		type Currency = Balances;
-		type ApproveOrigin = paint_system::EnsureRoot<u64>;
-		type RejectOrigin = paint_system::EnsureRoot<u64>;
-		type Event = ();
-		type ProposalRejection = ();
-		type ProposalBond = ProposalBond;
-		type ProposalBondMinimum = ProposalBondMinimum;
-		type SpendPeriod = SpendPeriod;
-		type Burn = Burn;
-	}
-
-	impl Trait for Test {
-		type Event = ();
-		type Currency = Balances;
-	}
-
-	pub type Balances = paint_balances::Module<Test>;
-	pub type System = paint_system::Module<Test>;
-	pub type Staking = paint_staking::Module<Test>;
-	pub type Timestamp = paint_timestamp::Module<Test>;
-	pub type Treasury = paint_treasury::Module<Test>;
-	pub type TreasuryReward = Module<Test>;
-
-	pub struct ExtBuilder {
-		existential_deposit: u64,
-	}
-
-	impl Default for ExtBuilder {
-		fn default() -> Self {
-			Self {
-				existential_deposit: 0,
+decl_module! {
+	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+		fn deposit_event() = default;
+		/// Mint money for the treasury!
+		fn on_finalize(_n: T::BlockNumber) {
+			if <system::Module<T>>::block_number() % Self::minting_interval() == Zero::zero() {
+				let reward = Self::current_payout();
+				<T as staking::Trait>::Currency::deposit_creating(&<treasury::Module<T>>::account_id(), reward);
+				<Pot<T>>::put(<balances::Module<T>>::free_balance(&<treasury::Module<T>>::account_id()));
+				Self::deposit_event(RawEvent::TreasuryMinting(
+					Self::pot(),
+					reward,
+					<system::Module<T>>::block_number())
+				);
 			}
 		}
 	}
+}
 
-	impl ExtBuilder {
-		fn build(self) -> runtime_io::TestExternalities {
-			let balance_factor = if self.existential_deposit > 0 {
-				256
-			} else {
-				1
-			};
-			let mut t = paint_system::GenesisConfig::default().build_storage::<Test>().unwrap();
-			t.0.extend(
-				paint_balances::GenesisConfig::<Test> {
-					balances: vec![
-							(1, 10000000000 * balance_factor),
-							(2, 10000000000 * balance_factor),
-							(3, 10000000000 * balance_factor),
-							(4, 10000000000 * balance_factor),
-							(10, 10000000000 * balance_factor),
-							(11, 10000000000 * balance_factor),
-							(20, 10000000000 * balance_factor),
-							(21, 10000000000 * balance_factor),
-							(30, 10000000000 * balance_factor),
-							(31, 10000000000 * balance_factor),
-							(40, 10000000000 * balance_factor),
-							(41, 10000000000 * balance_factor),
-							(100, 10000000000 * balance_factor),
-							(101, 10000000000 * balance_factor),
-							// This allow us to have a total_payout different from 0.
-							(999, 1_000_000_000_000),
-					],
-					vesting: vec![],
-				}.build_storage().unwrap().0,
-			);
-
-			t.0.extend(
-				paint_staking::GenesisConfig::<Test> {
-					current_era: 0,
-					stakers: vec![],
-					validator_count: 2,
-					minimum_validator_count: 0,
-					invulnerables: vec![],
-					slash_reward_fraction: Perbill::from_percent(10),
-					.. Default::default()
-				}.build_storage().unwrap().0,
-			);
-			t.0.extend(
-				treasury_reward::GenesisConfig::<Test> {
-					current_payout: 9500000,
-					minting_interval: One::one(),
-				}.build_storage().unwrap().0,
-			);
-			t.into()
-		}
+decl_event!(
+	pub enum Event<T> where <T as system::Trait>::BlockNumber,
+							Balance2 = <<T as staking::Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance,
+							Balance = <T as balances::Trait>::Balance
+							{
+		TreasuryMinting(Balance, Balance2, BlockNumber),
 	}
+);
 
-	#[test]
-	fn basic_setup_works() {
-		// Verifies initial conditions of mock
-		ExtBuilder::default().build().execute_with(|| {
-			// Initial Era and session
-			assert_eq!(Staking::current_era(), 0);
-			let treasury_address = Treasury::account_id();
-			System::set_block_number(1);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(1);
-			System::set_block_number(2);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(2);
-			System::set_block_number(100);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(101);
-			System::set_block_number(101);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(102);
-			System::set_block_number(102);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(103);
-			System::set_block_number(103);
-			<TreasuryReward as OnFinalize<u64>>::on_finalize(104);
-			assert_eq!(Balances::free_balance(treasury_address) > 0, true);
-		});
+decl_storage! {
+	trait Store for Module<T: Trait> as TreasuryReward {
+		/// Interval in number of blocks to reward treasury
+		pub MintingInterval get(minting_interval) config(): T::BlockNumber;
+		/// Current payout of module
+		pub CurrentPayout get(current_payout) config(): BalanceOf<T>;
+		/// Current pot
+		pub Pot get(pot): T::Balance;
 	}
 }
