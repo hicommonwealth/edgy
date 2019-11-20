@@ -71,14 +71,14 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 /// Runtime version.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("node"),
-	impl_name: create_runtime_str!("substrate-node"),
-	authoring_version: 10,
+	impl_name: create_runtime_str!("edgeware-node"),
+	authoring_version: 1,
 	// Per convention: if the runtime behavior changes, increment spec_version
 	// and set impl_version to equal spec_version. If only runtime
 	// implementation changes and behavior does not, then leave spec_version as
 	// is and increment impl_version.
-	spec_version: 194,
-	impl_version: 194,
+	spec_version: 1,
+	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 };
 
@@ -470,10 +470,10 @@ impl nicks::Trait for Runtime {
 }
 
 
-// impl edge_identity::Trait for Runtime {
-// 	type Event = Event;
-// 	type Currency = Balances;
-// }
+impl edge_identity::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
 
 // impl edge_signaling::Trait for Runtime {
 // 	type Event = Event;
@@ -550,7 +550,7 @@ construct_runtime!(
 		Offences: offences::{Module, Call, Storage, Event},
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
 		Nicks: nicks::{Module, Call, Storage, Event<T>},
-		// Identity: edge_identity::{Module, Call, Storage, Config<T>, Event<T>},
+		Identity: edge_identity::{Module, Call, Storage, Config<T>, Event<T>},
 		// Signaling: edge_signaling::{Module, Call, Storage, Config<T>, Event<T>},
 		// Voting: edge_voting::{Module, Call, Storage, Event<T>},
 		// TreasuryReward: edge_treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},

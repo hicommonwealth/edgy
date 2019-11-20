@@ -22,7 +22,7 @@ use serde::{Serialize, Deserialize};
 use edgeware_runtime::{
 	AuthorityDiscoveryConfig, BabeConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
 	GrandpaConfig, ImOnlineConfig, IndicesConfig, SessionConfig, SessionKeys, StakerStatus, StakingConfig, SudoConfig,
-	SystemConfig, TechnicalCommitteeConfig, WASM_BINARY,
+	SystemConfig, TechnicalCommitteeConfig, IdentityConfig, SignalingConfig, TreasuryRewardConfig, WASM_BINARY,
 };
 use edgeware_runtime::Block;
 use edgeware_runtime::constants::currency::*;
@@ -33,7 +33,7 @@ use grandpa_primitives::{AuthorityId as GrandpaId};
 use babe_primitives::{AuthorityId as BabeId};
 use im_online::sr25519::{AuthorityId as ImOnlineId};
 use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
-use sr_primitives::{Perbill, traits::{Verify, IdentifyAccount}};
+use sr_primitives::{Perbill, traits::{Verify, IdentifyAccount, One}};
 
 pub use edgeware_primitives::{AccountId, Balance, Signature};
 pub use edgeware_runtime::GenesisConfig;
@@ -289,6 +289,19 @@ pub fn testnet_genesis(
 		}),
 		membership_Instance1: Some(Default::default()),
 		treasury: Some(Default::default()),
+		identity: Some(IdentityConfig {
+			verifiers: vec![get_account_id_from_seed::<AccountId>("Alice")],
+			expiration_length: (1 * DAYS).try_into().unwrap(),
+			registration_bond: 1 * DOLLARS,
+		}),
+		// signaling: Some(SignalingConfig {
+		// 	voting_length: (3 * DAYS).try_into().unwrap(),
+		// 	proposal_creation_bond: 100 * DOLLARS,
+		// }),
+		// treasury_reward: Some(TreasuryRewardConfig {
+		// 	current_payout: 158 * DOLLARS,
+		// 	minting_interval: One::one(),
+		// }),
 	}
 }
 
