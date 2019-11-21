@@ -39,6 +39,7 @@ use version::RuntimeVersion;
 #[cfg(any(feature = "std", test))]
 use version::NativeVersion;
 use primitives::OpaqueMetadata;
+use aura_primitives::ed25519::AuthorityId as AuraId;
 use grandpa::AuthorityList as GrandpaAuthorityList;
 use grandpa::fg_primitives;
 use im_online::sr25519::{AuthorityId as ImOnlineId};
@@ -136,10 +137,8 @@ parameter_types! {
 	pub const ExpectedBlockTime: Moment = MILLISECS_PER_BLOCK;
 }
 
-impl babe::Trait for Runtime {
-	type EpochDuration = EpochDuration;
-	type ExpectedBlockTime = ExpectedBlockTime;
-	type EpochChangeTrigger = babe::ExternalTrigger;
+impl aura::Trait for Runtime {
+	type AuthorityId = AuraId;
 }
 
 impl indices::Trait for Runtime {
@@ -190,7 +189,7 @@ parameter_types! {
 }
 impl timestamp::Trait for Runtime {
 	type Moment = Moment;
-	type OnTimestampSet = Babe;
+	type OnTimestampSet = Aura;
 	type MinimumPeriod = MinimumPeriod;
 }
 
@@ -199,7 +198,7 @@ parameter_types! {
 }
 
 impl authorship::Trait for Runtime {
-	type FindAuthor = session::FindAccountFromAuthorIndex<Self, Babe>;
+	type FindAuthor = session::FindAccountFromAuthorIndex<Self, Aura>;
 	type UncleGenerations = UncleGenerations;
 	type FilterUncle = ();
 	type EventHandler = (Staking, ImOnline);
@@ -208,20 +207,22 @@ impl authorship::Trait for Runtime {
 impl_opaque_keys! {
 	pub struct SessionKeys {
 		pub grandpa: Grandpa,
-		pub babe: Babe,
+		pub aura: Aura,
 		pub im_online: ImOnline,
 		pub authority_discovery: AuthorityDiscovery,
 	}
 }
 
 parameter_types! {
-	pub const DisabledValidatorsThreshold: Perbill = Perbill::from_percent(17);
+	pub const Period: BlockNumber = 10 * MINUTES;
+	pub const Offset: BlockNumber = 0;
+	pub const DisabledValidatorsThreshold: Perbill = Perbill::from_percent(33);
 }
 
 impl session::Trait for Runtime {
 	type OnSessionEnding = Staking;
 	type SessionHandler = <SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
-	type ShouldEndSession = Babe;
+	type ShouldEndSession = session::PeriodicSessions<Period, Offset>;
 	type Event = Event;
 	type Keys = SessionKeys;
 	type ValidatorId = <Self as system::Trait>::AccountId;
@@ -485,12 +486,13 @@ construct_runtime!(
 	{
 		System: system::{Module, Call, Storage, Config, Event},
 		Utility: utility::{Module, Call, Event},
-		Babe: babe::{Module, Call, Storage, Config, Inherent(Timestamp)},
 		Timestamp: timestamp::{Module, Call, Storage, Inherent},
+		Aura: aura::{Module, Config<T>, Inherent(Timestamp)},
+		
 		Authorship: authorship::{Module, Call, Storage, Inherent},
 		Indices: indices,
 		Balances: balances::{default, Error},
-		TransactionPayment: transaction_payment::{Module, Storage},
+		
 		Staking: staking::{default, OfflineWorker},
 		Session: session::{Module, Call, Storage, Event, Config<T>},
 		Democracy: democracy::{Module, Call, Storage, Config, Event<T>},
@@ -501,6 +503,7 @@ construct_runtime!(
 		Treasury: treasury::{Module, Call, Storage, Config, Event<T>},
 		Contracts: contracts,
 		Sudo: sudo,
+		TransactionPayment: transaction_payment::{Module, Storage},
 		ImOnline: im_online::{Module, Call, Storage, Event<T>, ValidateUnsigned, Config<T>},
 		AuthorityDiscovery: authority_discovery::{Module, Call, Config},
 		Offences: offences::{Module, Call, Storage, Event},
@@ -568,11 +571,14 @@ impl_runtime_apis! {
 			Executive::finalize_block()
 		}
 
-		fn inherent_extrinsics(data: InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
+		fn inherent_extrinsics(data: inherents::InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
 			data.create_extrinsics()
 		}
 
-		fn check_inherents(block: Block, data: InherentData) -> CheckInherentsResult {
+		fn check_inherents(
+			block: Block,
+			data: inherents::InherentData,
+		) -> inherents::CheckInherentsResult {
 			data.check_extrinsics(&block)
 		}
 
@@ -593,27 +599,25 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl fg_primitives::GrandpaApi<Block> for Runtime {
-		fn grandpa_authorities() -> GrandpaAuthorityList {
-			Grandpa::grandpa_authorities()
+	impl aura_primitives::AuraApi<Block, AuraId> for Runtime {
+		fn slot_duration() -> u64 {
+			Aura::slot_duration()
+		}
+
+		fn authorities() -> Vec<AuraId> {
+			Aura::authorities()
 		}
 	}
 
-	impl babe_primitives::BabeApi<Block> for Runtime {
-		fn configuration() -> babe_primitives::BabeConfiguration {
-			// The choice of `c` parameter (where `1 - c` represents the
-			// probability of a slot being empty), is done in accordance to the
-			// slot duration and expected target block time, for safely
-			// resisting network delays of maximum two seconds.
-			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
-			babe_primitives::BabeConfiguration {
-				slot_duration: Babe::slot_duration(),
-				epoch_length: EpochDuration::get(),
-				c: PRIMARY_PROBABILITY,
-				genesis_authorities: Babe::authorities(),
-				randomness: Babe::randomness(),
-				secondary_slots: true,
-			}
+	impl substrate_session::SessionKeys<Block> for Runtime {
+		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
+			SessionKeys::generate(seed)
+		}
+	}
+
+	impl fg_primitives::GrandpaApi<Block> for Runtime {
+		fn grandpa_authorities() -> GrandpaAuthorityList {
+			Grandpa::grandpa_authorities()
 		}
 	}
 
@@ -676,12 +680,6 @@ impl_runtime_apis! {
 	> for Runtime {
 		fn query_info(uxt: UncheckedExtrinsic, len: u32) -> RuntimeDispatchInfo<Balance> {
 			TransactionPayment::query_info(uxt, len)
-		}
-	}
-
-	impl substrate_session::SessionKeys<Block> for Runtime {
-		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
-			SessionKeys::generate(seed)
 		}
 	}
 }

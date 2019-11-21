@@ -35,7 +35,7 @@ structopt = "0.3.3"
 
 # primitives
 authority-discovery-primitives = { package = "substrate-authority-discovery-primitives", git = "https://github.com/paritytech/substrate.git" }
-babe-primitives = { package = "substrate-consensus-babe-primitives", git = "https://github.com/paritytech/substrate.git"}
+aura-primitives = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate.git"}
 grandpa_primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/paritytech/substrate.git" }
 primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git" }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git" }
@@ -49,7 +49,7 @@ inherents = { package = "substrate-inherents", git = "https://github.com/parityt
 chain-spec = { package = "substrate-chain-spec", git = "https://github.com/paritytech/substrate.git" }
 transaction_pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate.git" }
 network = { package = "substrate-network", git = "https://github.com/paritytech/substrate.git" }
-babe = { package = "substrate-consensus-babe", git = "https://github.com/paritytech/substrate.git" }
+aura = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate.git" }
 grandpa = { package = "substrate-finality-grandpa", git = "https://github.com/paritytech/substrate.git" }
 keyring = { package = "substrate-keyring", git = "https://github.com/paritytech/substrate.git" }
 client_db = { package = "substrate-client-db", git = "https://github.com/paritytech/substrate.git", default-features = false }
@@ -100,7 +100,7 @@ rand6 = { package = "rand", version = "0.6", features = ["wasm-bindgen"], option
 
 [dev-dependencies]
 keystore = { package = "substrate-keystore", git = "https://github.com/paritytech/substrate.git" }
-babe = { package = "substrate-consensus-babe", git = "https://github.com/paritytech/substrate.git", features = ["test-helpers"] }
+aura = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate.git" }
 consensus-common = { package = "substrate-consensus-common", git = "https://github.com/paritytech/substrate.git" }
 service-test = { package = "substrate-service-test", git = "https://github.com/paritytech/substrate.git" }
 futures03 = { package = "futures-preview", version = "0.3.0-alpha.19" }

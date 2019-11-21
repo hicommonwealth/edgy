@@ -20,7 +20,7 @@ use chain_spec::ChainSpecExtension;
 use primitives::{Pair, Public, crypto::UncheckedInto, sr25519};
 use serde::{Serialize, Deserialize};
 use edgeware_runtime::{
-	AuthorityDiscoveryConfig, BabeConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
+	AuthorityDiscoveryConfig, AuraConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
 	GrandpaConfig, ImOnlineConfig, IndicesConfig, SessionConfig, SessionKeys, StakerStatus, StakingConfig, SudoConfig,
 	SystemConfig, WASM_BINARY,
 	// IdentityConfig, SignalingConfig, TreasuryRewardConfig,
@@ -31,7 +31,7 @@ use substrate_service;
 use hex_literal::hex;
 use substrate_telemetry::TelemetryEndpoints;
 use grandpa_primitives::{AuthorityId as GrandpaId};
-use babe_primitives::{AuthorityId as BabeId};
+use aura_primitives::ed25519::AuthorityId as AuraId;
 use im_online::sr25519::{AuthorityId as ImOnlineId};
 use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
 use sr_primitives::{Perbill, traits::{Verify, IdentifyAccount, One}};
@@ -65,11 +65,11 @@ pub fn flaming_fir_config() -> Result<ChainSpec, String> {
 
 fn session_keys(
 	grandpa: GrandpaId,
-	babe: BabeId,
+	aura: AuraId,
 	im_online: ImOnlineId,
 	authority_discovery: AuthorityDiscoveryId,
 ) -> SessionKeys {
-	SessionKeys { grandpa, babe, im_online, authority_discovery }
+	SessionKeys { grandpa, aura, im_online, authority_discovery }
 }
 
 fn staging_testnet_config_genesis() -> GenesisConfig {
@@ -79,7 +79,7 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 	// and
 	// for i in 1 2 3 4 ; do for j in session; do subkey --ed25519 inspect "$secret"//fir//$j//$i; done; done
 
-	let initial_authorities: Vec<(AccountId, AccountId, GrandpaId, BabeId, ImOnlineId, AuthorityDiscoveryId)> = vec![(
+	let initial_authorities: Vec<(AccountId, AccountId, GrandpaId, AuraId, ImOnlineId, AuthorityDiscoveryId)> = vec![(
 		// 5Fbsd6WXDGiLTxunqeK5BATNiocfCqu9bS1yArVjCgeBLkVy
 		hex!["9c7a2ee14e565db0c69f78c7b4cd839fbf52b607d867e9e9c5a79042898a0d12"].into(),
 		// 5EnCiV7wSHeNhjW3FSUwiJNkcc2SBkPLn5Nj93FmbLtBjQUq
@@ -183,7 +183,7 @@ pub fn get_authority_keys_from_seed(seed: &str) -> (
 	AccountId,
 	AccountId,
 	GrandpaId,
-	BabeId,
+	AuraId,
 	ImOnlineId,
 	AuthorityDiscoveryId,
 ) {
@@ -191,7 +191,7 @@ pub fn get_authority_keys_from_seed(seed: &str) -> (
 		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
 		get_account_id_from_seed::<sr25519::Public>(seed),
 		get_from_seed::<GrandpaId>(seed),
-		get_from_seed::<BabeId>(seed),
+		get_from_seed::<AuraId>(seed),
 		get_from_seed::<ImOnlineId>(seed),
 		get_from_seed::<AuthorityDiscoveryId>(seed),
 	)
@@ -199,7 +199,7 @@ pub fn get_authority_keys_from_seed(seed: &str) -> (
 
 /// Helper function to create GenesisConfig for testing
 pub fn testnet_genesis(
-	initial_authorities: Vec<(AccountId, AccountId, GrandpaId, BabeId, ImOnlineId, AuthorityDiscoveryId)>,
+	initial_authorities: Vec<(AccountId, AccountId, GrandpaId, AuraId, ImOnlineId, AuthorityDiscoveryId)>,
 	root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
 	enable_println: bool,
@@ -272,7 +272,7 @@ pub fn testnet_genesis(
 		sudo: Some(SudoConfig {
 			key: root_key,
 		}),
-		babe: Some(BabeConfig {
+		aura: Some(AuraConfig {
 			authorities: vec![],
 		}),
 		im_online: Some(ImOnlineConfig {
