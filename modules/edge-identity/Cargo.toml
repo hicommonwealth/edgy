@@ -8,15 +8,15 @@ edition = "2018"
 serde = { version = "1.0", default-features = false, optional = true }
 safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
-rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", default-features = false }
-sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-support = { package ="paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
-system = { package ="paint-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
-balances = { package ="paint-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
+rstd = { package = "sr-std", git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
+sr-primitives = { git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
+support = { package ="srml-support", git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
+system = { package ="srml-system", git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
+balances = { package ="srml-balances", git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
 
 [dev-dependencies]
-sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+sr-io = { git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
+substrate-primitives = { git = "https://github.com/hicommonwealth/substrate.git", branch = "master", default-features = false }
 
 [features]
 default = ["std"]

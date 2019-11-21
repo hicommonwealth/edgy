@@ -28,6 +28,7 @@ use support::dispatch::Result;
 use codec::{Decode, Encode};
 
 use sr_primitives::RuntimeDebug;
+
 use sr_primitives::traits::{Hash, Zero};
 use support::{decl_event, decl_module, decl_storage, ensure, StorageMap};
 
@@ -334,18 +335,18 @@ decl_event!(
 decl_storage! {
     trait Store for Module<T: Trait> as Identity {
         /// The hashed identities.
-        pub Identities get(fn identities): Vec<T::Hash>;
+        pub Identities get(identities): Vec<T::Hash>;
         /// Actual identity for a given hash, if it's current.
-        pub IdentityOf get(fn identity_of): map T::Hash => Option<IdentityRecord<T::AccountId, T::BlockNumber>>;
+        pub IdentityOf get(identity_of): map T::Hash => Option<IdentityRecord<T::AccountId, T::BlockNumber>>;
         /// List of identities awaiting attestation or verification and associated expirations
-        pub IdentitiesPending get(fn identities_pending): Vec<(T::Hash, T::BlockNumber)>;
+        pub IdentitiesPending get(identities_pending): Vec<(T::Hash, T::BlockNumber)>;
         /// Number of blocks allowed between register/attest or attest/verify.
-        pub ExpirationLength get(fn expiration_length) config(): T::BlockNumber;
+        pub ExpirationLength get(expiration_length) config(): T::BlockNumber;
         /// Identity types of users
-        pub UsedTypes get(fn used_types): map T::AccountId => Vec<IdentityType>;
+        pub UsedTypes get(used_types): map T::AccountId => Vec<IdentityType>;
         /// Verifier set
-        pub Verifiers get(fn verifiers) config(): Vec<T::AccountId>;
+        pub Verifiers get(verifiers) config(): Vec<T::AccountId>;
         /// Registration bond
-        pub RegistrationBond get(fn registration_bond) config(): BalanceOf<T>;
+        pub RegistrationBond get(registration_bond) config(): BalanceOf<T>;
     }
 }
