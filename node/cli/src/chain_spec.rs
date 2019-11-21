@@ -22,7 +22,7 @@ use serde::{Serialize, Deserialize};
 use edgeware_runtime::{
 	AuthorityDiscoveryConfig, BabeConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
 	GrandpaConfig, ImOnlineConfig, IndicesConfig, SessionConfig, SessionKeys, StakerStatus, StakingConfig, SudoConfig,
-	SystemConfig, TechnicalCommitteeConfig, WASM_BINARY,
+	SystemConfig, WASM_BINARY,
 	// IdentityConfig, SignalingConfig, TreasuryRewardConfig,
 };
 use edgeware_runtime::Block;
@@ -262,10 +262,6 @@ pub fn testnet_genesis(
 			members: vec![],
 			phantom: Default::default(),
 		}),
-		collective_Instance2: Some(TechnicalCommitteeConfig {
-			members: vec![],
-			phantom: Default::default(),
-		}),
 		contracts: Some(ContractsConfig {
 			current_schedule: contracts::Schedule {
 				enable_println, // this should only be enabled on development chains
@@ -288,7 +284,6 @@ pub fn testnet_genesis(
 		grandpa: Some(GrandpaConfig {
 			authorities: vec![],
 		}),
-		membership_Instance1: Some(Default::default()),
 		treasury: Some(Default::default()),
 		// identity: Some(IdentityConfig {
 		// 	verifiers: vec![get_account_id_from_seed::<AccountId>("Alice")],
