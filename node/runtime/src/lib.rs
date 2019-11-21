@@ -71,14 +71,14 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 /// Runtime version.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("node"),
-	impl_name: create_runtime_str!("edgeware-node"),
-	authoring_version: 1,
+	impl_name: create_runtime_str!("substrate-node"),
+	authoring_version: 10,
 	// Per convention: if the runtime behavior changes, increment spec_version
 	// and set impl_version to equal spec_version. If only runtime
 	// implementation changes and behavior does not, then leave spec_version as
 	// is and increment impl_version.
-	spec_version: 1,
-	impl_version: 1,
+	spec_version: 194,
+	impl_version: 196,
 	apis: RUNTIME_API_VERSIONS,
 };
 
@@ -188,7 +188,6 @@ impl transaction_payment::Trait for Runtime {
 parameter_types! {
 	pub const MinimumPeriod: Moment = SLOT_DURATION / 2;
 }
-
 impl timestamp::Trait for Runtime {
 	type Moment = Moment;
 	type OnTimestampSet = Babe;
@@ -236,7 +235,7 @@ impl session::historical::Trait for Runtime {
 	type FullIdentificationOf = staking::ExposureOf<Runtime>;
 }
 
-paint_staking_reward_curve::build! {
+pallet_staking_reward_curve::build! {
 	const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
 		min_inflation: 0_025_000,
 		max_inflation: 0_100_000,
@@ -469,26 +468,6 @@ impl nicks::Trait for Runtime {
 	type MaxLength = MaxLength;
 }
 
-
-impl edge_identity::Trait for Runtime {
-	type Event = Event;
-	type Currency = Balances;
-}
-
-// impl edge_signaling::Trait for Runtime {
-// 	type Event = Event;
-// 	type Currency = Balances;
-// }
-
-// impl edge_treasury_reward::Trait for Runtime {
-// 	type Event = Event;
-// 	type Currency = Balances;
-// }
-
-// impl edge_voting::Trait for Runtime {
-// 	type Event = Event;
-// }
-
 impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtime {
 	type Public = <Signature as traits::Verify>::Signer;
 	type Signature = Signature;
@@ -550,10 +529,6 @@ construct_runtime!(
 		Offences: offences::{Module, Call, Storage, Event},
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
 		Nicks: nicks::{Module, Call, Storage, Event<T>},
-		Identity: edge_identity::{Module, Call, Storage, Config<T>, Event<T>},
-		// Signaling: edge_signaling::{Module, Call, Storage, Config<T>, Event<T>},
-		// Voting: edge_voting::{Module, Call, Storage, Event<T>},
-		// TreasuryReward: edge_treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
 

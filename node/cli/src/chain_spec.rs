@@ -22,7 +22,8 @@ use serde::{Serialize, Deserialize};
 use edgeware_runtime::{
 	AuthorityDiscoveryConfig, BabeConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
 	GrandpaConfig, ImOnlineConfig, IndicesConfig, SessionConfig, SessionKeys, StakerStatus, StakingConfig, SudoConfig,
-	SystemConfig, TechnicalCommitteeConfig, IdentityConfig, SignalingConfig, TreasuryRewardConfig, WASM_BINARY,
+	SystemConfig, TechnicalCommitteeConfig, WASM_BINARY,
+	// IdentityConfig, SignalingConfig, TreasuryRewardConfig,
 };
 use edgeware_runtime::Block;
 use edgeware_runtime::constants::currency::*;
@@ -289,11 +290,11 @@ pub fn testnet_genesis(
 		}),
 		membership_Instance1: Some(Default::default()),
 		treasury: Some(Default::default()),
-		identity: Some(IdentityConfig {
-			verifiers: vec![get_account_id_from_seed::<AccountId>("Alice")],
-			expiration_length: (1 * DAYS).try_into().unwrap(),
-			registration_bond: 1 * DOLLARS,
-		}),
+		// identity: Some(IdentityConfig {
+		// 	verifiers: vec![get_account_id_from_seed::<AccountId>("Alice")],
+		// 	expiration_length: (1 * DAYS).try_into().unwrap(),
+		// 	registration_bond: 1 * DOLLARS,
+		// }),
 		// signaling: Some(SignalingConfig {
 		// 	voting_length: (3 * DAYS).try_into().unwrap(),
 		// 	proposal_creation_bond: 100 * DOLLARS,

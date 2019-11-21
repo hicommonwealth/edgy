@@ -10,9 +10,9 @@ safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
 rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", default-features = false }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-support = { package ="paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
-system = { package ="paint-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
-balances = { package ="paint-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
+support = { package ="palette-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+system = { package ="palette-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
+balances = { package ="pallet-balances", git = "https://github.com/paritytech/substrate.git", default-features = false }
 
 [dev-dependencies]
 sr-io = { git = "https://github.com/paritytech/substrate.git", default-features = false }

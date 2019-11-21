@@ -39,6 +39,7 @@ babe-primitives = { package = "substrate-consensus-babe-primitives", git = "http
 grandpa_primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/paritytech/substrate.git" }
 primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git" }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git" }
+sp-timestamp = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 
 # core dependencies
 runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate.git" }
@@ -59,17 +60,18 @@ substrate-service = { git = "https://github.com/paritytech/substrate.git",  defa
 substrate-telemetry = { package = "substrate-telemetry", git = "https://github.com/paritytech/substrate.git" }
 authority-discovery = { package = "substrate-authority-discovery", git = "https://github.com/paritytech/substrate.git" }
 
-# paint dependencies
-indices = { package = "paint-indices", git = "https://github.com/paritytech/substrate.git" }
-timestamp = { package = "paint-timestamp", git = "https://github.com/paritytech/substrate.git", default-features = false }
-finality_tracker = { package = "paint-finality-tracker", git = "https://github.com/paritytech/substrate.git", default-features = false }
-contracts = { package = "paint-contracts", git = "https://github.com/paritytech/substrate.git" }
-system = { package = "paint-system", git = "https://github.com/paritytech/substrate.git" }
-balances = { package = "paint-balances", git = "https://github.com/paritytech/substrate.git" }
-transaction-payment = { package = "paint-transaction-payment", git = "https://github.com/paritytech/substrate.git" }
-support = { package = "paint-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
-im_online = { package = "paint-im-online", git = "https://github.com/paritytech/substrate.git", default-features = false }
-sr-authority-discovery = { package = "paint-authority-discovery", git = "https://github.com/paritytech/substrate.git" }
+# pallet dependencies
+indices = { package = "pallet-indices", git = "https://github.com/paritytech/substrate.git" }
+timestamp = { package = "pallet-timestamp", git = "https://github.com/paritytech/substrate.git", default-features = false }
+finality_tracker = { package = "pallet-finality-tracker", git = "https://github.com/paritytech/substrate.git", default-features = false }
+sp-finality-tracker = { git = "https://github.com/paritytech/substrate.git", default-features = false }
+contracts = { package = "pallet-contracts", git = "https://github.com/paritytech/substrate.git" }
+system = { package = "palette-system", git = "https://github.com/paritytech/substrate.git" }
+balances = { package = "pallet-balances", git = "https://github.com/paritytech/substrate.git" }
+transaction-payment = { package = "pallet-transaction-payment", git = "https://github.com/paritytech/substrate.git" }
+support = { package = "palette-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+im_online = { package = "pallet-im-online", git = "https://github.com/paritytech/substrate.git", default-features = false }
+sr-authority-discovery = { package = "pallet-authority-discovery", git = "https://github.com/paritytech/substrate.git" }
 
 
 # node-specific dependencies
