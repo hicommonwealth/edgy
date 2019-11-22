@@ -17,10 +17,10 @@
 //! Some configurable implementations as associated type for the substrate runtime.
 
 use edgeware_primitives::Balance;
-use sr_primitives::weights::Weight;
 use sr_primitives::traits::{Convert, Saturating};
 use sr_primitives::{Fixed64, Perbill};
 use support::traits::{OnUnbalanced, Currency, Get};
+use support::weights::Weight;
 use crate::{Balances, System, Authorship, MaximumBlockWeight, NegativeImbalance};
 
 pub struct Author;
