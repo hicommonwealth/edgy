@@ -953,6 +953,7 @@ dependencies = [
  "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)",
  "sp-finality-tracker 2.0.0 (git+https://github.com/paritytech/substrate.git)",
  "sp-timestamp 2.0.0 (git+https://github.com/paritytech/substrate.git)",
  "sr-io 2.0.0 (git+https://github.com/paritytech/substrate.git)",

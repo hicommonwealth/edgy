@@ -36,12 +36,48 @@ use im_online::sr25519::{AuthorityId as ImOnlineId};
 use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
 use sr_primitives::{Perbill, traits::{Verify, IdentifyAccount, One}};
 
-pub use edgeware_primitives::{AccountId, Balance, Signature};
+pub use edgeware_primitives::{AccountId, Balance, Signature, BlockNumber};
 pub use edgeware_runtime::GenesisConfig;
+
+use std::fs::File;
+use std::io::Read;
+use serde_json::{Result};
 
 type AccountPublic = <Signature as Verify>::Signer;
 
 const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
+
+const TESTNET_DEFAULT_BALANCE: Balance = 1000000000000000000000;
+
+#[derive(Serialize, Deserialize)]
+struct Allocation {
+    balances: Vec<(AccountId, Balance)>,
+    vesting: Vec<(AccountId, BlockNumber, BlockNumber, Balance)>,
+}
+
+impl Allocation {
+	fn new() -> Allocation {
+		return Allocation {
+			balances: vec![],
+			vesting: vec![],
+		};
+	}
+
+	fn clone(self: Allocation) -> Allocation {
+		return Allocation {
+			balances: self.balances.clone(),
+			vesting: self.vesting.clone(),
+		};
+	}
+}
+
+fn get_lockdrop_participants_allocation(equalize_balances: bool) -> Result<Allocation>{
+	let mut file = File::open("../res/lockdrop_allocations.json").unwrap();
+	let mut data = String::new();
+	file.read_to_string(&mut data).unwrap();
+
+	return serde_json::from_str(&data);
+}
 
 /// Node `ChainSpec` extensions.
 ///
@@ -58,10 +94,6 @@ pub type ChainSpec = substrate_service::ChainSpec<
 	GenesisConfig,
 	Extensions,
 >;
-/// Flaming Fir testnet generator
-pub fn flaming_fir_config() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../res/flaming-fir.json")[..])
-}
 
 fn session_keys(
 	grandpa: GrandpaId,
