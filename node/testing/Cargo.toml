@@ -18,12 +18,12 @@ edgeware-primitives = { path = "../primitives" }
 edgeware-runtime = { path = "../runtime" }
 primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git" }
 runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate.git" }
-runtime_support = { package = "palette-support", git = "https://github.com/paritytech/substrate.git" }
+runtime_support = { package = "frame-support", git = "https://github.com/paritytech/substrate.git" }
 session = { package = "pallet-session", git = "https://github.com/paritytech/substrate.git" }
 sr-primitives = { git = "https://github.com/paritytech/substrate.git" }
 staking = { package = "pallet-staking", git = "https://github.com/paritytech/substrate.git" }
 substrate-executor = { git = "https://github.com/paritytech/substrate.git" }
-system = { package = "palette-system", git = "https://github.com/paritytech/substrate.git" }
+system = { package = "frame-system", git = "https://github.com/paritytech/substrate.git" }
 test-client = { package = "substrate-test-client", git = "https://github.com/paritytech/substrate.git" }
 timestamp = { package = "pallet-timestamp", git = "https://github.com/paritytech/substrate.git" }
 transaction-payment = { package = "pallet-transaction-payment", git = "https://github.com/paritytech/substrate.git" }

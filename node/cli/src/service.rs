@@ -19,6 +19,7 @@
 //! Service implementation. Specialized wrapper over substrate service.
 
 use std::sync::Arc;
+
 use client::{self, LongestChain};
 use grandpa::{self, FinalityProofProvider as GrandpaFinalityProofProvider};
 use edgeware_executor;
@@ -64,7 +65,7 @@ macro_rules! new_full_start {
 			.with_transaction_pool(|config, client|
 				Ok(transaction_pool::txpool::Pool::new(config, transaction_pool::FullChainApi::new(client)))
 			)?
-			.with_import_queue(|_config, client, mut select_chain, transaction_pool| {
+			.with_import_queue(|_config, client, mut select_chain, _transaction_pool| {
 				let select_chain = select_chain.take()
 					.ok_or_else(|| substrate_service::Error::SelectChainRequired)?;
 				let (grandpa_block_import, grandpa_link) = grandpa::block_import(
@@ -80,9 +81,8 @@ macro_rules! new_full_start {
 					None,
 					client,
 					inherent_data_providers.clone(),
-					Some(transaction_pool),
+					Some(_transaction_pool),
 				)?;
-
 				import_setup = Some((grandpa_block_import, grandpa_link));
 				Ok(import_queue)
 			})?
@@ -100,9 +100,9 @@ macro_rules! new_full_start {
 /// concrete types instead.
 macro_rules! new_full {
 	($config:expr, $with_startup_data: expr) => {{
-		use futures::sync::mpsc;
+		use futures01::sync::mpsc;
 		use network::DhtEvent;
-		use futures03::{
+		use futures::{
 			compat::Stream01CompatExt,
 			stream::StreamExt,
 			future::{FutureExt, TryFutureExt},
@@ -168,8 +168,6 @@ macro_rules! new_full {
 				service.keystore(),
 			)?;
 
-			// the AURA authoring task is considered essential, i.e. if it
-			// fails we take down the service with it.
 			service.spawn_essential_task(aura);
 
 			let future03_dht_event_rx = dht_event_rx.compat()

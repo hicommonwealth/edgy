@@ -25,8 +25,8 @@ crate-type = ["cdylib", "rlib"]
 # third-party dependencies
 codec = { package = "parity-scale-codec", version = "1.0.6" }
 serde = { version = "1.0.102", features = [ "derive" ] }
-futures = "0.1.29"
-futures03 = { package = "futures-preview", version = "0.3.0-alpha.19", features = ["compat"] }
+futures01 = { package = "futures", version = "0.1.29" }
+futures = { version = "0.3.1", features = ["compat"] }
 hex-literal = "0.2.1"
 jsonrpc-core = "14.0.3"
 log = "0.4.8"
@@ -67,10 +67,10 @@ timestamp = { package = "pallet-timestamp", git = "https://github.com/paritytech
 finality_tracker = { package = "pallet-finality-tracker", git = "https://github.com/paritytech/substrate.git", default-features = false }
 sp-finality-tracker = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 contracts = { package = "pallet-contracts", git = "https://github.com/paritytech/substrate.git" }
-system = { package = "palette-system", git = "https://github.com/paritytech/substrate.git" }
+system = { package = "frame-system", git = "https://github.com/paritytech/substrate.git" }
 balances = { package = "pallet-balances", git = "https://github.com/paritytech/substrate.git" }
 transaction-payment = { package = "pallet-transaction-payment", git = "https://github.com/paritytech/substrate.git" }
-support = { package = "palette-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
+support = { package = "frame-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
 im_online = { package = "pallet-im-online", git = "https://github.com/paritytech/substrate.git", default-features = false }
 sr-authority-discovery = { package = "pallet-authority-discovery", git = "https://github.com/paritytech/substrate.git" }
 

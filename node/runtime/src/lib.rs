@@ -27,10 +27,10 @@ use support::{
 use primitives::u32_trait::{_1, _2, _3, _4};
 use edgeware_primitives::{AccountId, AccountIndex, Balance, BlockNumber, Hash, Index, Moment, Signature};
 use sr_api::impl_runtime_apis;
-use sr_primitives::{Permill, Perbill, ApplyResult, impl_opaque_keys, generic, create_runtime_str};
+use sr_primitives::{Permill, Perbill, ApplyExtrinsicResult, impl_opaque_keys, generic, create_runtime_str};
 use sr_primitives::curve::PiecewiseLinear;
 use sr_primitives::transaction_validity::TransactionValidity;
-use sr_primitives::weights::Weight;
+use support::weights::Weight;
 use sr_primitives::traits::{
 	self, BlakeTwo256, Block as BlockT, NumberFor, StaticLookup, SaturatedConversion,
 	OpaqueKeys,
@@ -47,7 +47,7 @@ use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
 use transaction_payment_rpc_runtime_api::RuntimeDispatchInfo;
 use contracts_rpc_runtime_api::ContractExecResult;
 use system::offchain::TransactionSubmitter;
-use inherents::{InherentData, CheckInherentsResult};
+
 
 #[cfg(any(feature = "std", test))]
 pub use sr_primitives::BuildStorage;
@@ -563,7 +563,7 @@ impl_runtime_apis! {
 	}
 
 	impl block_builder_api::BlockBuilder<Block> for Runtime {
-		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyResult {
+		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyExtrinsicResult {
 			Executive::apply_extrinsic(extrinsic)
 		}
 
