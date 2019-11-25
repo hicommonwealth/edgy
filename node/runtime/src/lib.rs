@@ -478,6 +478,25 @@ impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtim
 	}
 }
 
+impl identity::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl signaling::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl treasury_reward::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl voting::Trait for Runtime {
+	type Event = Event;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -509,6 +528,10 @@ construct_runtime!(
 		Offences: offences::{Module, Call, Storage, Event},
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
 		Nicks: nicks::{Module, Call, Storage, Event<T>},
+		Identity: identity::{Module, Call, Storage, Config<T>, Event<T>},
+		Signaling: signaling::{Module, Call, Storage, Config<T>, Event<T>},
+		Voting: voting::{Module, Call, Storage, Event<T>},
+		TreasuryReward: treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
 

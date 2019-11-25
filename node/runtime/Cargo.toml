@@ -62,7 +62,10 @@ utility = { package = "frame-utility", git = "https://github.com/paritytech/subs
 transaction-payment = { package = "pallet-transaction-payment", git = "https://github.com/paritytech/substrate.git", default-features = false }
 transaction-payment-rpc-runtime-api = { package = "pallet-transaction-payment-rpc-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
 
-edge-x = { path = "../../modules/edge-x" }
+identity = { package = "edge-identity", path = "../../modules/edge-identity", default-features = false }
+signaling = { package = "edge-signaling", path = "../../modules/edge-signaling", default-features = false }
+treasury-reward = { package = "edge-treasury-reward", path = "../../modules/edge-treasury-reward", default-features = false }
+voting = { package = "edge-voting", path = "../../modules/edge-voting", default-features = false }
 
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/paritytech/substrate.git", version = "1.0.4" }
@@ -121,5 +124,8 @@ std = [
 	"utility/std",
 	"version/std",
 	"edgeware-primitives/std",
-	"edge-x/std",
+	"identity/std",
+	"signaling/std",
+	"treasury-reward/std",
+	"voting/std",
 ]

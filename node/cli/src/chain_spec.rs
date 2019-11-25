@@ -23,7 +23,7 @@ use edgeware_runtime::{
 	AuthorityDiscoveryConfig, AuraConfig, BalancesConfig, ContractsConfig, CouncilConfig, DemocracyConfig,
 	GrandpaConfig, ImOnlineConfig, IndicesConfig, SessionConfig, SessionKeys, StakerStatus, StakingConfig, SudoConfig,
 	SystemConfig, WASM_BINARY,
-	// IdentityConfig, SignalingConfig, TreasuryRewardConfig,
+	IdentityConfig, SignalingConfig, TreasuryRewardConfig,
 };
 use edgeware_runtime::Block;
 use edgeware_runtime::constants::currency::*;
@@ -38,6 +38,7 @@ use sr_primitives::{Perbill, traits::{Verify, IdentifyAccount, One}};
 
 pub use edgeware_primitives::{AccountId, Balance, Signature, BlockNumber};
 pub use edgeware_runtime::GenesisConfig;
+pub use edgeware_runtime::constants::{time::*};
 
 use std::fs::File;
 use std::io::Read;
@@ -317,19 +318,19 @@ pub fn testnet_genesis(
 			authorities: vec![],
 		}),
 		treasury: Some(Default::default()),
-		// identity: Some(IdentityConfig {
-		// 	verifiers: vec![get_account_id_from_seed::<AccountId>("Alice")],
-		// 	expiration_length: (1 * DAYS).try_into().unwrap(),
-		// 	registration_bond: 1 * DOLLARS,
-		// }),
-		// signaling: Some(SignalingConfig {
-		// 	voting_length: (3 * DAYS).try_into().unwrap(),
-		// 	proposal_creation_bond: 100 * DOLLARS,
-		// }),
-		// treasury_reward: Some(TreasuryRewardConfig {
-		// 	current_payout: 158 * DOLLARS,
-		// 	minting_interval: One::one(),
-		// }),
+		identity: Some(IdentityConfig {
+			verifiers: vec![get_account_id_from_seed::<sr25519::Public>("Alice")],
+			expiration_length: 1 * DAYS,
+			registration_bond: 1 * DOLLARS,
+		}),
+		signaling: Some(SignalingConfig {
+			voting_length: 3 * DAYS,
+			proposal_creation_bond: 100 * DOLLARS,
+		}),
+		treasury_reward: Some(TreasuryRewardConfig {
+			current_payout: 158 * DOLLARS,
+			minting_interval: One::one(),
+		}),
 	}
 }
 

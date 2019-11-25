@@ -94,5 +94,8 @@ pub fn config(support_changes_trie: bool, code: Option<&[u8]>) -> GenesisConfig 
 		collective_Instance1: Some(Default::default()),
 		sudo: Some(Default::default()),
 		treasury: Some(Default::default()),
+		identity: Some(Default::default()),
+		signaling: Some(Default::default()),
+		treasury_reward: Some(Default::default()),
 	}
 }
