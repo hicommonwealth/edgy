@@ -56,6 +56,8 @@ pub enum ChainSpec {
 	StagingTestnet,
 	/// CW Testing
 	CommonwealthTesting,
+	/// Edgeware testnet
+	EdgewareTestnet,
 }
 
 /// Get a chain config from a spec setting.
@@ -66,6 +68,7 @@ impl ChainSpec {
 			ChainSpec::LocalTestnet => chain_spec::local_testnet_config(),
 			ChainSpec::StagingTestnet => chain_spec::staging_testnet_config(),
 			ChainSpec::CommonwealthTesting => chain_spec::development_config(),
+			ChainSpec::EdgewareTestnet => chain_spec::edgeware_testnet_config(),
 		})
 	}
 
@@ -75,6 +78,7 @@ impl ChainSpec {
 			"local" => Some(ChainSpec::LocalTestnet),
 			"staging" => Some(ChainSpec::StagingTestnet),
 			"cw" => Some(ChainSpec::CommonwealthTesting),
+			"edge-test" => Some(ChainSpec::EdgewareTestnet),
 			_ => None,
 		}
 	}

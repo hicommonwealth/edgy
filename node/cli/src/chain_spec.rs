@@ -42,42 +42,28 @@ pub use edgeware_runtime::constants::{time::*};
 
 use std::fs::File;
 use std::io::Read;
+use std::path::Path;
 use serde_json::{Result};
+use hex::FromHex;
 
 type AccountPublic = <Signature as Verify>::Signer;
 
 const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
+const DEFAULT_PROTOCOL_ID: &str = "edg";
 
-const TESTNET_DEFAULT_BALANCE: Balance = 1000000000000000000000;
-
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Allocation {
-    balances: Vec<(AccountId, Balance)>,
-    vesting: Vec<(AccountId, BlockNumber, BlockNumber, Balance)>,
+    balances: Vec<(String, String)>,
+    vesting: Vec<(String, BlockNumber, BlockNumber, String)>,
 }
 
-impl Allocation {
-	fn new() -> Allocation {
-		return Allocation {
-			balances: vec![],
-			vesting: vec![],
-		};
-	}
-
-	fn clone(self: Allocation) -> Allocation {
-		return Allocation {
-			balances: self.balances.clone(),
-			vesting: self.vesting.clone(),
-		};
-	}
-}
-
-fn get_lockdrop_participants_allocation(equalize_balances: bool) -> Result<Allocation>{
-	let mut file = File::open("../res/lockdrop_allocations.json").unwrap();
+fn get_lockdrop_participants_allocation() -> Result<Allocation>{
+	let path = Path::new("node/cli/fixtures/lockdrop-allocation.json");
+	let mut file = File::open(&path).unwrap();
 	let mut data = String::new();
 	file.read_to_string(&mut data).unwrap();
-
-	return serde_json::from_str(&data);
+	let a: Allocation = serde_json::from_str(&data)?;
+	return Ok(a);
 }
 
 /// Node `ChainSpec` extensions.
@@ -179,6 +165,8 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 		root_key,
 		Some(endowed_accounts),
 		false,
+		vec![],
+		vec![]
 	)
 }
 
@@ -236,6 +224,8 @@ pub fn testnet_genesis(
 	root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
 	enable_println: bool,
+	balances: Vec<(AccountId, Balance)>,
+	vesting: Vec<(AccountId, BlockNumber, BlockNumber, Balance)>,
 ) -> GenesisConfig {
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(|| {
 		vec![
@@ -266,8 +256,9 @@ pub fn testnet_genesis(
 			balances: endowed_accounts.iter().cloned()
 				.map(|k| (k, ENDOWMENT))
 				.chain(initial_authorities.iter().map(|x| (x.0.clone(), STASH)))
+				.chain(balances)
 				.collect(),
-			vesting: vec![],
+			vesting: vesting,
 		}),
 		indices: Some(IndicesConfig {
 			ids: endowed_accounts.iter().cloned()
@@ -334,6 +325,69 @@ pub fn testnet_genesis(
 	}
 }
 
+fn edgeware_testnet_config_genesis() -> GenesisConfig {
+	let allocation = get_lockdrop_participants_allocation().unwrap();
+	let balances = allocation.balances.iter().map(|b| {
+		let balance = b.1.to_string().parse::<Balance>().unwrap();
+		return (
+			<[u8; 32]>::from_hex(b.0.clone()).unwrap().into(),
+			balance,
+		);
+	})
+	.filter(|b| b.1 > 0)
+	.collect();
+	let vesting = allocation.vesting.iter().map(|b| {
+		let vesting_balance = b.3.to_string().parse::<Balance>().unwrap();
+		return (
+			(<[u8; 32]>::from_hex(b.0.clone()).unwrap()).into(),
+			b.1,
+			b.2,
+			vesting_balance,
+		);
+	})
+	.filter(|b| b.3 > 0)
+	.collect();
+
+	testnet_genesis(
+		vec![
+			get_authority_keys_from_seed("Alice"),
+			get_authority_keys_from_seed("Bob"),
+			get_authority_keys_from_seed("Charlie"),
+			get_authority_keys_from_seed("Dave"),
+			get_authority_keys_from_seed("Eve"),
+			get_authority_keys_from_seed("Ferdie"),
+			get_authority_keys_from_seed("George"),
+			get_authority_keys_from_seed("Hila"),
+		],
+		get_account_id_from_seed::<sr25519::Public>("Alice"),
+		None,
+		true,
+		balances,
+		vesting,
+	)
+}
+
+/// Edgeware config (8 validators)
+pub fn edgeware_testnet_config() -> ChainSpec {
+	let data = r#"
+		{
+			"tokenDecimals": 18,
+			"tokenSymbol": "EDG"
+		}"#;
+	let properties = serde_json::from_str(data).unwrap();
+
+	ChainSpec::from_genesis(
+		"Edgeware Testnet",
+		"edgeware_testnet",
+		edgeware_testnet_config_genesis,
+		vec![],
+		Some(TelemetryEndpoints::new(vec![(STAGING_TELEMETRY_URL.to_string(), 0)])),
+		Some(DEFAULT_PROTOCOL_ID),
+		None,
+		properties,
+	)
+}
+
 fn development_config_genesis() -> GenesisConfig {
 	testnet_genesis(
 		vec![
@@ -342,6 +396,8 @@ fn development_config_genesis() -> GenesisConfig {
 		get_account_id_from_seed::<sr25519::Public>("Alice"),
 		None,
 		true,
+		vec![],
+		vec![],
 	)
 }
 
@@ -368,6 +424,8 @@ fn local_testnet_genesis() -> GenesisConfig {
 		get_account_id_from_seed::<sr25519::Public>("Alice"),
 		None,
 		false,
+		vec![],
+		vec![],
 	)
 }
 
@@ -400,6 +458,8 @@ pub(crate) mod tests {
 			get_account_id_from_seed::<sr25519::Public>("Alice"),
 			None,
 			false,
+			vec![],
+			vec![],
 		)
 	}
 

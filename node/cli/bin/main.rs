@@ -48,10 +48,10 @@ fn main() -> Result<(), substrate_cli::error::Error> {
 		name: "Edgeware Node",
 		commit: env!("VERGEN_SHA_SHORT"),
 		version: env!("CARGO_PKG_VERSION"),
-		executable_name: "substrate",
+		executable_name: "edgeware",
 		author: "Commonwealth Labs <hello@commonwealth.im>",
 		description: "The Edgeware node",
-		support_url: "https://github.com/paritytech/substrate/issues/new",
+		support_url: "https://github.com/hicommonwealth/edgeware-node/issues/new",
 	};
 
 	edgeware_cli::run(std::env::args(), Exit, version)
