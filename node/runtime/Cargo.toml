@@ -27,7 +27,7 @@ sr-primitives = { git = "https://github.com/paritytech/substrate.git", default-f
 sr-staking-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
 substrate-keyring = { git = "https://github.com/paritytech/substrate.git", optional = true }
 substrate-session = { git = "https://github.com/paritytech/substrate.git", default-features = false }
-tx-pool-api = { package = "substrate-transaction-pool-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
+txpool-runtime-api = { package = "sp-transaction-pool-runtime-api", git = "https://github.com/paritytech/substrate.git", default-features = false }
 version = { package = "sr-version", git = "https://github.com/paritytech/substrate.git", default-features = false }
 
 # pallet dependencies
@@ -120,7 +120,7 @@ std = [
 	"transaction-payment-rpc-runtime-api/std",
 	"transaction-payment/std",
 	"treasury/std",
-	"tx-pool-api/std",
+	"txpool-runtime-api/std",
 	"utility/std",
 	"version/std",
 	"edgeware-primitives/std",
