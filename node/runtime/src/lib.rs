@@ -27,10 +27,10 @@ use support::{
 use primitives::u32_trait::{_1, _2, _3, _4};
 use edgeware_primitives::{AccountId, AccountIndex, Balance, BlockNumber, Hash, Index, Moment, Signature};
 use sr_api::impl_runtime_apis;
-use sr_primitives::{Permill, Perbill, ApplyResult, impl_opaque_keys, generic, create_runtime_str};
+use sr_primitives::{Permill, Perbill, ApplyExtrinsicResult, impl_opaque_keys, generic, create_runtime_str};
 use sr_primitives::curve::PiecewiseLinear;
 use sr_primitives::transaction_validity::TransactionValidity;
-use sr_primitives::weights::Weight;
+use support::weights::Weight;
 use sr_primitives::traits::{
 	self, BlakeTwo256, Block as BlockT, NumberFor, StaticLookup, SaturatedConversion,
 	OpaqueKeys,
@@ -47,7 +47,7 @@ use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
 use transaction_payment_rpc_runtime_api::RuntimeDispatchInfo;
 use contracts_rpc_runtime_api::ContractExecResult;
 use system::offchain::TransactionSubmitter;
-use inherents::{InherentData, CheckInherentsResult};
+
 
 #[cfg(any(feature = "std", test))]
 pub use sr_primitives::BuildStorage;
@@ -72,7 +72,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 /// Runtime version.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("node"),
-	impl_name: create_runtime_str!("substrate-node"),
+	impl_name: create_runtime_str!("edgeware-node"),
 	authoring_version: 10,
 	// Per convention: if the runtime behavior changes, increment spec_version
 	// and set impl_version to equal spec_version. If only runtime
@@ -149,7 +149,7 @@ impl indices::Trait for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 1 * DOLLARS;
+	pub const ExistentialDeposit: Balance = 1 * MILLICENTS;
 	pub const TransferFee: Balance = 1 * CENTS;
 	pub const CreationFee: Balance = 1 * CENTS;
 }
@@ -250,6 +250,7 @@ pallet_staking_reward_curve::build! {
 parameter_types! {
 	pub const SessionsPerEra: sr_staking_primitives::SessionIndex = 6;
 	pub const BondingDuration: staking::EraIndex = 24 * 28;
+	pub const SlashDeferDuration: staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
 	pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
 }
 
@@ -263,6 +264,9 @@ impl staking::Trait for Runtime {
 	type Reward = (); // rewards are minted from the void
 	type SessionsPerEra = SessionsPerEra;
 	type BondingDuration = BondingDuration;
+	type SlashDeferDuration = SlashDeferDuration;
+	/// A super-majority of the council can cancel the slash.
+	type SlashCancelOrigin = collective::EnsureProportionAtLeast<_3, _4, AccountId, CouncilCollective>;
 	type SessionInterface = Self;
 	type RewardCurve = RewardCurve;
 }
@@ -478,6 +482,25 @@ impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtim
 	}
 }
 
+impl identity::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl signaling::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl treasury_reward::Trait for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+}
+
+impl voting::Trait for Runtime {
+	type Event = Event;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -509,6 +532,10 @@ construct_runtime!(
 		Offences: offences::{Module, Call, Storage, Event},
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
 		Nicks: nicks::{Module, Call, Storage, Event<T>},
+		Identity: identity::{Module, Call, Storage, Config<T>, Event<T>},
+		Signaling: signaling::{Module, Call, Storage, Config<T>, Event<T>},
+		Voting: voting::{Module, Call, Storage, Event<T>},
+		TreasuryReward: treasury_reward::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
 
@@ -563,7 +590,7 @@ impl_runtime_apis! {
 	}
 
 	impl block_builder_api::BlockBuilder<Block> for Runtime {
-		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyResult {
+		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyExtrinsicResult {
 			Executive::apply_extrinsic(extrinsic)
 		}
 
@@ -587,7 +614,7 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl tx_pool_api::TaggedTransactionQueue<Block> for Runtime {
+	impl txpool_runtime_api::TaggedTransactionQueue<Block> for Runtime {
 		fn validate_transaction(tx: <Block as BlockT>::Extrinsic) -> TransactionValidity {
 			Executive::validate_transaction(tx)
 		}

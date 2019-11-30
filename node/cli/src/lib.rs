@@ -52,23 +52,23 @@ pub enum ChainSpec {
 	Development,
 	/// Whatever the current runtime is, with simple Alice/Bob auths.
 	LocalTestnet,
-	/// The Flaming Fir testnet.
-	FlamingFir,
 	/// Whatever the current runtime is with the "global testnet" defaults.
 	StagingTestnet,
 	/// CW Testing
 	CommonwealthTesting,
+	/// Edgeware testnet
+	EdgewareTestnet,
 }
 
 /// Get a chain config from a spec setting.
 impl ChainSpec {
 	pub(crate) fn load(self) -> Result<chain_spec::ChainSpec, String> {
 		Ok(match self {
-			ChainSpec::FlamingFir => chain_spec::flaming_fir_config()?,
 			ChainSpec::Development => chain_spec::development_config(),
 			ChainSpec::LocalTestnet => chain_spec::local_testnet_config(),
 			ChainSpec::StagingTestnet => chain_spec::staging_testnet_config(),
 			ChainSpec::CommonwealthTesting => chain_spec::development_config(),
+			ChainSpec::EdgewareTestnet => chain_spec::edgeware_testnet_config(),
 		})
 	}
 
@@ -76,9 +76,9 @@ impl ChainSpec {
 		match s {
 			"dev" => Some(ChainSpec::Development),
 			"local" => Some(ChainSpec::LocalTestnet),
-			"" | "fir" | "flaming-fir" => Some(ChainSpec::FlamingFir),
 			"staging" => Some(ChainSpec::StagingTestnet),
 			"cw" => Some(ChainSpec::CommonwealthTesting),
+			"edge-test" => Some(ChainSpec::EdgewareTestnet),
 			_ => None,
 		}
 	}
